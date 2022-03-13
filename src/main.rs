@@ -1,16 +1,29 @@
 use actix_cors::Cors;
 use actix_web::{
+    App,
     http::header,
+    HttpServer,
     middleware::{
         Compress,
         Logger,
     },
-    App,
-    HttpServer,
+    web::{
+        self,
+        Data,
+    },
 };
 use anyhow::Result;
 use dotenv::dotenv;
-use std::env;
+use graphql::{
+    graphiql,
+    graphql,
+    playground,
+    schemas::create_schema,
+};
+use std::{
+    env,
+    sync::Arc,
+};
 
 // 今回サーバーの実装にActix Webを使用しているので、非同期ランタイムはactix-rtを採用.
 #[actix_rt::main]
@@ -22,9 +35,14 @@ async fn main() -> Result<()> {
     env::set_var("RUST_LOG", "debug");
     env_logger::init();
 
+    // Schemaオブジェクトをスレッドセーフな型でホランラップする.
+    let schema = Arc::new(create_schema());
+
     // サーバーの色んな設定.
     let mut server = HttpServer::new(move || {
         App::new()
+            // SchemaオブジェクトをActix Webのハンドラメソッドの引数として使えるようにする.
+            .app_data(Data::from(schema.clone()))
             .wrap(
                 Cors::default()
                     .allow_any_origin()
@@ -36,6 +54,16 @@ async fn main() -> Result<()> {
             )
             .wrap(Compress::default())
             .wrap(Logger::default())
+            // /graphqlエンドポイントにgraphql()をセットする.
+            .service(
+                web::resource("/graphql")
+                    .route(web::get().to(graphql))
+                    .route(web::post().to(graphql)),
+            )
+            // /graphiqlエンドポイントにgraphiql()をセットする.
+            .service(web::resource("/graphiql").route(web::get().to(graphiql)))
+            // /playgroundエンドポイントにplayground()をセットする.
+            .service(web::resource("/playground").route(web::get().to(playground)))
     });
 
     // Herokuとかにデプロイすることを考えて、HOSTやPORTの環境変数を優先する.
