@@ -76,7 +76,7 @@ async fn main() -> Result<()> {
         Err(_) => env::var("LOCAL_PORT")?,
     };
     let address = format!("{}:{}", host, port);
-    server = server.bind(format!("{}", address))?;
+    server = server.bind(address.to_string())?;
     server.run().await?;
 
     Ok(())

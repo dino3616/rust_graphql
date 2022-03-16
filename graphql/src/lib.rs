@@ -25,7 +25,7 @@ pub async fn graphql(req: actix_web::HttpRequest, payload: Payload, schema: Data
     let token = req
         .headers()
         .get("token")
-        .and_then(|t| Some(t.to_str().unwrap().to_string()));
+        .map(|t| t.to_str().unwrap().to_string());
 
     let context = Context {
         token,
