@@ -12,6 +12,10 @@ use juniper_actix::{
     playground_handler,
 };
 
+#[macro_use]
+extern crate diesel;
+
+pub mod db;
 pub mod resolvers;
 pub mod schemas;
 use crate::schemas::root::{
