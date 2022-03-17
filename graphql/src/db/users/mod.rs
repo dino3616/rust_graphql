@@ -1,9 +1,5 @@
 use crate::db::schema::users;
-use chrono::{
-    DateTime,
-    NaiveDateTime,
-    offset::Local,
-};
+use chrono::NaiveDateTime;
 
 mod repository;
 
@@ -24,7 +20,7 @@ pub struct User {
 #[table_name = "users"]
 pub struct UserNewForm {
     pub name: String,
-    pub profile: String,
+    pub profile: Option<String>,
 }
 
 // AsChangeset: この構造体がDBの任意の行に変更を加えられることを示す.
@@ -33,5 +29,5 @@ pub struct UserNewForm {
 pub struct UserUpdateForm {
     pub name: Option<String>,
     pub profile: Option<String>,
-    pub updated_at: Option<DateTime<Local>>,
+    pub updated_at: Option<NaiveDateTime>,
 }
