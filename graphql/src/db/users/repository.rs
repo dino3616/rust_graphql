@@ -78,7 +78,7 @@ impl Repository {
     // key_idに合致するUserの行をupdate_formで更新し、その行のUserを返す.
     pub fn update(pool: &Data<PgPool>, key_id: i32, update_form: UserUpdateForm) -> Result<User> {
         let connection = pool.get()?;
-        let query = update(users.filter(id.eq(key_id))).set(update_form);
+        let query = update(users.find(key_id)).set(update_form);
 
         let sql = debug_query::<Pg, _>(&query).to_string();
         debug!("{}", sql);
