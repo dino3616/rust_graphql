@@ -1,8 +1,9 @@
-use chrono::NaiveDateTime;
+use crate::db::users;
+use chrono::{
+    NaiveDateTime,
+    offset::Local,
+};
 use juniper::GraphQLInputObject;
-// use crate::db::{
-//     users,
-// };
 
 pub struct User {
     pub id: i32,
@@ -12,17 +13,17 @@ pub struct User {
     pub updated_at: NaiveDateTime,
 }
 
-// impl From<users::User> for User{
-//     fn from(user: users::User)->Self{
-//         Self{
-//             id: user.id,
-//             name: user.name,
-//             profile: user.password,
-//             created_at: user.created_at,
-//             updated_at: user.updated_at,
-//         }
-//     }
-// }
+impl From<users::User> for User {
+    fn from(user: users::User) -> Self {
+        Self {
+            id: user.id,
+            name: user.name,
+            profile: user.profile.unwrap_or_else(|| String::from("")),
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        }
+    }
+}
 
 #[derive(GraphQLInputObject)]
 pub struct NewUser {
@@ -30,16 +31,14 @@ pub struct NewUser {
     pub profile: Option<String>,
 }
 
-// impl From<NewUser> for users::UserNewForm{
-//     fn from(new_user: NewUser)->Self{
-//         Self{
-//             id: new_user.id,
-//             name: new_user.name,
-//             password: new_user.password,
-//             token: new_user.token,
-//         }
-//     }
-// }
+impl From<NewUser> for users::UserNewForm {
+    fn from(new_user: NewUser) -> Self {
+        Self {
+            name: new_user.name,
+            profile: new_user.profile,
+        }
+    }
+}
 
 #[derive(GraphQLInputObject)]
 pub struct UpdateUser {
@@ -47,13 +46,12 @@ pub struct UpdateUser {
     pub profile: Option<String>,
 }
 
-// impl From<UpdateUser> for users::UserUpdateForm{
-//     fn from(update_user: UpdateUser)->Self{
-//         Self{
-//             id: update_user.id,
-//             name: update_user.name,
-//             password: update_user.password,
-//             token: update_user.token,
-//         }
-//     }
-// }
+impl From<UpdateUser> for users::UserUpdateForm {
+    fn from(update_user: UpdateUser) -> Self {
+        Self {
+            name: update_user.name,
+            profile: update_user.profile,
+            updated_at: Local::now().naive_local(),
+        }
+    }
+}

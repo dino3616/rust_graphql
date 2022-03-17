@@ -2,6 +2,7 @@ use crate::db::schema::users;
 use chrono::NaiveDateTime;
 
 mod repository;
+pub use repository::Repository;
 
 // Identifiable: この構造体がDBのテーブルであることを示す.
 // Queryable: この構造体がDBに問い合わせることができることを示す.
@@ -29,5 +30,5 @@ pub struct UserNewForm {
 pub struct UserUpdateForm {
     pub name: Option<String>,
     pub profile: Option<String>,
-    pub updated_at: Option<NaiveDateTime>,
+    pub updated_at: NaiveDateTime,
 }
