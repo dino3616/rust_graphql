@@ -7,6 +7,7 @@ use root::{
     Query,
     Schema,
 };
+pub mod user;
 
 pub fn create_schema() -> Schema {
     // Schemaオブジェクトを新規に作成する関数.
