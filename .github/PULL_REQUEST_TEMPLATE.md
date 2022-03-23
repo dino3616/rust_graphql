@@ -1,3 +1,7 @@
+---
+title: '[LABEL] <title>'
+---
+
 # Related Issues
 
 <!--
